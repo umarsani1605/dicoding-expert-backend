@@ -1,8 +1,9 @@
 # Forum API
 
 Back-End API aplikasi forum diskusi: registrasi pengguna, autentikasi, thread,
-komentar, dan balasan komentar. Dibangun dengan Express dan PostgreSQL,
-menerapkan Clean Architecture dan automation testing dengan 100% test coverage.
+komentar, balasan komentar, dan menyukai komentar. Dibangun dengan Express dan
+PostgreSQL, menerapkan Clean Architecture dan automation testing dengan 100%
+test coverage, serta dilengkapi CI/CD melalui GitHub Actions.
 
 ## Arsitektur
 
@@ -83,3 +84,26 @@ dimigrasi. Berkas `.test.env` dimuat otomatis oleh Vitest.
 | DELETE | `/threads/{threadId}/comments/{commentId}` | Bearer | Menghapus komentar (soft delete) |
 | POST | `/threads/{threadId}/comments/{commentId}/replies` | Bearer | Menambahkan balasan |
 | DELETE | `/threads/{threadId}/comments/{commentId}/replies/{replyId}` | Bearer | Menghapus balasan (soft delete) |
+| PUT | `/threads/{threadId}/comments/{commentId}/likes` | Bearer | Menyukai atau batal menyukai komentar |
+
+## Continuous Integration dan Deployment
+
+Dua workflow GitHub Actions tersedia di `.github/workflows`:
+
+- `ci.yml` berjalan pada setiap pull request ke `main`. Workflow ini memasang
+  Node.js 22, menyalakan PostgreSQL sebagai service container, lalu menjalankan
+  lint, migrasi database pengujian, dan seluruh test.
+- `cd.yml` berjalan pada setiap push ke `main`. Workflow ini terhubung ke server
+  melalui SSH dan menjalankan skrip deploy yang menarik kode terbaru, memasang
+  dependensi, menjalankan migrasi, lalu me-restart aplikasi.
+
+Kredensial server disimpan sebagai repository secret: `SSH_HOST`, `SSH_USER`,
+dan `SSH_PRIVATE_KEY`.
+
+## Limit access
+
+Berkas `nginx.conf` pada root proyek adalah konfigurasi reverse proxy yang
+dipakai di server. Resource `/threads` beserta seluruh path di dalamnya dibatasi
+90 permintaan per menit per alamat IP, sebagai perlindungan terhadap serangan
+DDoS. Aplikasi Node.js sendiri hanya mendengar pada `localhost`, sehingga satu-
+satunya jalur masuk adalah melalui nginx yang melayani HTTPS.
