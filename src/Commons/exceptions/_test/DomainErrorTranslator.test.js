@@ -34,6 +34,14 @@ describe('DomainErrorTranslator', () => {
       .toStrictEqual(new InvariantError('tidak dapat menghapus balasan karena properti yang dibutuhkan tidak ada'));
     expect(DomainErrorTranslator.translate(new Error('DELETE_REPLY_USE_CASE.NOT_MEET_DATA_TYPE_SPECIFICATION')))
       .toStrictEqual(new InvariantError('tidak dapat menghapus balasan karena tipe data tidak sesuai'));
+    expect(DomainErrorTranslator.translate(new Error('NEW_LIKE.NOT_CONTAIN_NEEDED_PROPERTY')))
+      .toStrictEqual(new InvariantError('tidak dapat menyukai komentar karena properti yang dibutuhkan tidak ada'));
+    expect(DomainErrorTranslator.translate(new Error('NEW_LIKE.NOT_MEET_DATA_TYPE_SPECIFICATION')))
+      .toStrictEqual(new InvariantError('tidak dapat menyukai komentar karena tipe data tidak sesuai'));
+    expect(DomainErrorTranslator.translate(new Error('LIKE_COMMENT_USE_CASE.NOT_CONTAIN_THREAD_ID')))
+      .toStrictEqual(new InvariantError('tidak dapat menyukai komentar karena properti yang dibutuhkan tidak ada'));
+    expect(DomainErrorTranslator.translate(new Error('LIKE_COMMENT_USE_CASE.NOT_MEET_DATA_TYPE_SPECIFICATION')))
+      .toStrictEqual(new InvariantError('tidak dapat menyukai komentar karena tipe data tidak sesuai'));
     expect(DomainErrorTranslator.translate(new Error('GET_THREAD_DETAIL_USE_CASE.NOT_CONTAIN_THREAD_ID')))
       .toStrictEqual(new InvariantError('tidak dapat mengambil detail thread karena properti yang dibutuhkan tidak ada'));
     expect(DomainErrorTranslator.translate(new Error('GET_THREAD_DETAIL_USE_CASE.NOT_MEET_DATA_TYPE_SPECIFICATION')))

@@ -5,6 +5,7 @@ import DetailReply from '../../../Domains/replies/entities/DetailReply.js';
 import ThreadRepository from '../../../Domains/threads/ThreadRepository.js';
 import CommentRepository from '../../../Domains/comments/CommentRepository.js';
 import ReplyRepository from '../../../Domains/replies/ReplyRepository.js';
+import LikeRepository from '../../../Domains/likes/LikeRepository.js';
 import GetThreadDetailUseCase from '../GetThreadDetailUseCase.js';
 
 describe('GetThreadDetailUseCase', () => {
@@ -28,6 +29,7 @@ describe('GetThreadDetailUseCase', () => {
     const mockThreadRepository = new ThreadRepository();
     const mockCommentRepository = new CommentRepository();
     const mockReplyRepository = new ReplyRepository();
+    const mockLikeRepository = new LikeRepository();
 
     mockThreadRepository.getThreadById = vi.fn(() => Promise.resolve({
       id: 'thread-123',
@@ -81,10 +83,15 @@ describe('GetThreadDetailUseCase', () => {
       },
     ]));
 
+    mockLikeRepository.getLikeCountsByThreadId = vi.fn(() => Promise.resolve([
+      { commentId: 'comment-123', likeCount: 2 },
+    ]));
+
     const getThreadDetailUseCase = new GetThreadDetailUseCase({
       threadRepository: mockThreadRepository,
       commentRepository: mockCommentRepository,
       replyRepository: mockReplyRepository,
+      likeRepository: mockLikeRepository,
     });
 
     const detailThread = await getThreadDetailUseCase.execute({ threadId: 'thread-123' });
@@ -102,6 +109,7 @@ describe('GetThreadDetailUseCase', () => {
           date: '2021-08-08T07:22:33.555Z',
           content: 'sebuah comment',
           isDelete: false,
+          likeCount: 2,
           replies: [
             new DetailReply({
               id: 'reply-123',
@@ -125,6 +133,7 @@ describe('GetThreadDetailUseCase', () => {
           date: '2021-08-08T07:26:21.338Z',
           content: 'comment yang dihapus',
           isDelete: true,
+          likeCount: 0,
           replies: [
             new DetailReply({
               id: 'reply-789',
@@ -141,9 +150,12 @@ describe('GetThreadDetailUseCase', () => {
     expect(detailThread.comments[0].content).toEqual('sebuah comment');
     expect(detailThread.comments[0].replies[0].content).toEqual('**balasan telah dihapus**');
     expect(detailThread.comments[1].content).toEqual('**komentar telah dihapus**');
+    expect(detailThread.comments[0].likeCount).toEqual(2);
+    expect(detailThread.comments[1].likeCount).toEqual(0);
 
     expect(mockThreadRepository.getThreadById).toHaveBeenCalledWith('thread-123');
     expect(mockCommentRepository.getCommentsByThreadId).toHaveBeenCalledWith('thread-123');
     expect(mockReplyRepository.getRepliesByThreadId).toHaveBeenCalledWith('thread-123');
+    expect(mockLikeRepository.getLikeCountsByThreadId).toHaveBeenCalledWith('thread-123');
   });
 });
