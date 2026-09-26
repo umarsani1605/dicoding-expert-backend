@@ -1,0 +1,7 @@
+node_modules
+coverage
+.env
+.test.env
+.DS_Store
+*.zip
+[0-9]-*.md
