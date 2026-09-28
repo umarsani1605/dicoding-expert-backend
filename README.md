@@ -5,6 +5,9 @@ komentar, balasan komentar, dan menyukai komentar. Dibangun dengan Express dan
 PostgreSQL, menerapkan Clean Architecture dan automation testing dengan 100%
 test coverage, serta dilengkapi CI/CD melalui GitHub Actions.
 
+API berjalan pada <https://tough-bugs-hang-brightly.st.a.dcdg.xyz>, melalui
+protokol HTTPS dengan sertifikat Let's Encrypt.
+
 ## Arsitektur
 
 Kode terbagi menjadi empat layer sesuai Clean Architecture:
